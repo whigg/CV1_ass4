@@ -1,12 +1,12 @@
 function [ keypoint_matchings ] = keypoint_matching(image1, image2)
-% git clone git://github.com/vlfeat/vlfeat.git
-run('vlfeat-0.9.21-bin/vlfeat-0.9.21/toolbox/vl_setup')
 
 %KEYPOINT_MATCHING Find the keypoint matchings between two images.
 % Input arguments:
 %   image1, image2     Rgb or grayscale images.
 % Dependencies:
 %   VLFeat (see http://www.vlfeat.org/install-matlab.html)
+% git clone git://github.com/vlfeat/vlfeat.git
+run('vlfeat-0.9.21-bin/vlfeat-0.9.21/toolbox/vl_setup')
 
 close ALL % close all figures
 
@@ -17,17 +17,20 @@ if nargin == 0
 end
 
 % transform to grayscale if necessary
+image1_rgb = image1;
 [ ~, ~, c1 ] = size(image1);
 if c1 == 3
 image1 = rgb2gray(image1);
 end
+
+image2_rgb = image2;
 [ ~, ~, c2 ] = size(image2);
 if c2 == 3
 image2 = rgb2gray(image2);
 end
 
 % show original image1
-figure, imshow(image1)
+figure, imshow(image1_rgb)
 
 % transform to single
 image1 = single(image1);
