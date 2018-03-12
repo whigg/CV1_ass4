@@ -5,9 +5,9 @@ function [ keypoint_matchings ] = keypoint_matching(image1, image2, visualizePoi
 %   visualizePoints     Amount of features (points) to display (default: 50).
 
 % DEPENDENCIES:
-%%%   VLFeat (see http://www.vlfeat.org/install-matlab.html)
+%%% VLFeat (see http://www.vlfeat.org/install-matlab.html)
 %%% git clone git://github.com/vlfeat/vlfeat.git
-%%%run('vlfeat-0.9.21-bin/vlfeat-0.9.21/toolbox/vl_setup')
+run('vlfeat-0.9.21-bin/vlfeat-0.9.21/toolbox/vl_setup')
 %%%run('/Users/Nils/vlfeat-0.9.21/toolbox/vl_setup')
 
 close ALL % close all figures
@@ -22,6 +22,9 @@ if nargin < 3
 end
 
 % transform to grayscale if necessary
+image1_rgb = image1;
+image2_rgb = image2;
+
 if size(image1, 3) == 3
 image1 = rgb2gray(image1);
 end
@@ -46,7 +49,7 @@ s_image2 = single(image2);
 % Take a random subset (with set size set to 50) of all matching points, 
 % and plot on the image. Connect matching pairs with lines.
 
-figure, imshowpair(image1, image2, 'montage') % init figure
+figure, imshowpair(image1_rgb, image2_rgb, 'montage') % init figure
 title('Matching features in both images')
 
 perm = randperm(size(matches, 2)); % shuffle indices randomly
