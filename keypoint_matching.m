@@ -1,4 +1,7 @@
 function [ keypoint_matchings ] = keypoint_matching(image1, image2)
+% git clone git://github.com/vlfeat/vlfeat.git
+run('vlfeat-0.9.21-bin/vlfeat-0.9.21/toolbox/vl_setup')
+
 %KEYPOINT_MATCHING Find the keypoint matchings between two images.
 % Input arguments:
 %   image1, image2     Rgb or grayscale images.
