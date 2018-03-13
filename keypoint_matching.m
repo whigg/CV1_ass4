@@ -1,4 +1,4 @@
-function [ keypoint_matchings ] = keypoint_matching(image1, image2, visualizePoints)
+function [ matches, f1, f2 ] = keypoint_matching(image1, image2, visualizePoints)
 %KEYPOINT_MATCHING Find the keypoint matchings between two images.
 % Input arguments:
 %   image1, image2      Rgb or grayscale images.
@@ -43,7 +43,6 @@ s_image2 = single(image2);
 
 % find matching features
 [matches, ~] = vl_ubcmatch(d1, d2);
-
 
 %%% Visualization %%%
 % Take a random subset (with set size set to 50) of all matching points, 
