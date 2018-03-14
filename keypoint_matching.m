@@ -53,7 +53,7 @@ s_image2 = single(image2);
 % and plot on the image. Connect matching pairs with lines.
 
 if visualization
-    
+
     figure, imshowpair(image1_rgb, image2_rgb, 'montage') % init figure
     title('Matching features in both images')
 
@@ -64,16 +64,16 @@ if visualization
     sel1 = matches(1, sel);
     h1 = vl_plotframe(f1(:, sel1));
     h2 = vl_plotframe(f1(:, sel1));
-    set(h1, 'color', 'k', 'linewidth', 3);
-    set(h2, 'color', 'y', 'linewidth', 2);
+%     set(h1, 'color', 'k', 'linewidth', 3);
+%     set(h2, 'color', 'y', 'linewidth', 2);
 
     % Draw the interest poins for image2
     sel2 = matches(2, sel);
     f2(1, :) = f2(1, :) + size(image1, 2); % 850 pixels to the right, because image2 is next to image1
     h1 = vl_plotframe(f2(:, sel2));
     h2 = vl_plotframe(f2(:, sel2));
-    set(h1, 'color', 'k', 'linewidth', 3);
-    set(h2, 'color', 'y', 'linewidth', 2);
+%     set(h1, 'color', 'k', 'linewidth', 3);
+%     set(h2, 'color', 'y', 'linewidth', 2);
 
     hold on
 
@@ -83,7 +83,6 @@ if visualization
         y = [f1(2, sel1(i)) f2(2, sel2(i))];
         line(x, y, 'Color', 'cyan', 'LineWidth', 1)
     end
-
 end
 
 end
