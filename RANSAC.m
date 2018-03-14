@@ -20,7 +20,7 @@ if nargin < 4
     [ T, f1, f2 ] = keypoint_matching(image1, image2);
 end
 if nargin < 5
-    P = 100; % For testing set to one
+    P = 10; % For testing set to one
 end
 
 % transform to grayscale if necessary
@@ -115,27 +115,15 @@ function visualization(image1_rgb, image2_rgb, f1, f2)
 figure, imshowpair(image1_rgb, image2_rgb, 'montage') % init figure
 title('Matching features in both images')
 
-% Draw the interest poins for image1
-h1 = vl_plotframe(f1);
-h2 = vl_plotframe(f1);
-disp(h1)
-% set(h1, 'color', 'k', 'linewidth', 3);
-% set(h2, 'color', 'y', 'linewidth', 2);
-
-% Draw the interest poins for image2
-%f2(1, :) = f2(1, :) + size(image1, 2); % 850 pixels to the right, because image2 is next to image1
-h1 = vl_plotframe(f2);
-h2 = vl_plotframe(f2);
-% set(h1, 'color', 'k', 'linewidth', 3);
-% set(h2, 'color', 'y', 'linewidth', 2);
+[ ~, w, ~ ] = size(image1_rgb)
 
 hold on
 
 % Draw lines between each pair of points
-for i = 1:50 
-    x = [f1(1, i) f2(1, i)];
-    y = [f1(2, i) f2(2, i)];
-    line(x, y, 'Color', 'cyan', 'LineWidth', 1)
+for i = 50:60
+    x = [f1(1, i) f2(1, i) + w];
+    y = [f1(2, i) f2(2, i) ];
+    line(x, y, 'Color', 'green', 'LineWidth', 1)
 end
 
 
