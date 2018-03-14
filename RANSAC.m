@@ -21,14 +21,13 @@ if nargin < 4
     [ T, f1, f2 ] = keypoint_matching(image1, image2);
 end
 if nargin < 5
-<<<<<<< HEAD
+
     P = 50; % For testing set to one
-=======
     P = 11;
 end
 if nargin < 6
     visualization = false;
->>>>>>> ce384f44bfa91144e743df364ea984dae208067d
+
 end
 
 matches_im1 = T(1, :);
@@ -139,19 +138,13 @@ title('Matching features in both images')
 hold on
 
 % Draw lines between each pair of points
-<<<<<<< HEAD
-for i = 40:60
-=======
+
 for i = 1:50
->>>>>>> ce384f44bfa91144e743df364ea984dae208067d
     x = [f1(1, i) f2(1, i) + w];
     y = [f1(2, i) f2(2, i) ];
     line(x, y, 'Color', 'green', 'LineWidth', 1)
 end
-<<<<<<< HEAD
-=======
 
->>>>>>> ce384f44bfa91144e743df364ea984dae208067d
 hold off
 
 end
