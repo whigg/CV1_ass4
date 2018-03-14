@@ -11,8 +11,8 @@ close ALL % close all figures
 
 % set default parameters
 if nargin == 0
-    image1 = imread('nils1.jpeg');
-    image2 = imread('nils2.jpeg');
+    image1 = imread('boat1.pgm');
+    image2 = imread('boat2.pgm');
 end
 if nargin < 3
     N = 10;
@@ -21,13 +21,10 @@ if nargin < 4
     [ T, f1, f2 ] = keypoint_matching(image1, image2);
 end
 if nargin < 5
-
-    P = 50; % For testing set to one
     P = 11;
 end
 if nargin < 6
     visualization = false;
-
 end
 
 matches_im1 = T(1, :);
@@ -96,7 +93,6 @@ for n = 1:N
         visualization(image1, image2, f1, transformed_f1)
     end
     
-    
     %im1_feat_points = [ x1 ; y1 ];
     trans_im1_feat_points = [ b(1:2:end), b(2:2:end) ]';
     OG_im2_feat_points = f2(1:2, matches_im2);
@@ -115,19 +111,65 @@ for n = 1:N
     % Show transformation
     %tform = affine2d([x(1) -x(2) 0; -x(3) x(4) 0; 0 0 1]);
     %result = imwarp(image1, tform);
-    %figure, imshow(result)
-    
-    
+    %figure, imshow(result)    
 end
 
 % Show transformation
-tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
-    -best_transformation(3) best_transformation(4) 0; ...
-    0 0 1]);
-result = imwarp(image1, tform);
-figure, imshow(result)
+%tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
+%    -best_transformation(3) best_transformation(4) 0; ...
+%    0 0 1]);
+%result = imwarp(image1, tform);
+%figure, imshow(result)
     
+% Transform the image using the best transformation matrix
+transform(image1, best_transformation);
+
 end
+
+
+function transform(image, trans)
+    M = [[trans(1) trans(2)]
+         [trans(3) trans(4)]];
+    translation = [trans(5), trans(6)]';
+
+    [ h, w, c ] = size(image);
+    if c == 3
+        image = rgb2gray(image);
+    end
+    t_image_map = zeros(h, w, 3);    
+    for y = 1:h
+        for x = 1:w
+           coords = [y, x]';
+           translated_point = M * coords + translation;
+           t_y = round(translated_point(1));
+           t_x = round(translated_point(2));
+           t_image_map(y, x, 1) = t_y;
+           t_image_map(y, x, 2) = t_x;
+           t_image_map(y, x, 3) = image(y, x);
+        end
+    end
+    
+    t_image_map(:, :, 1) = t_image_map(:, :, 1) ...
+        - min(min(t_image_map(:, :, 1))) + 1;
+    t_image_map(:, :, 2) = t_image_map(:, :, 2) ...
+        - min(min(t_image_map(:, :, 2))) + 1;
+    
+    max_y = max(max(t_image_map(:, :, 1)));
+    max_x = max(max(t_image_map(:, :, 2)));
+    
+    image_trans = zeros(max_y, max_x);
+    figure, imshow(image_trans)
+    for y = 1:h
+        for x = 1:w
+            t_y = t_image_map(y, x, 1);
+            t_x = t_image_map(y, x, 2);
+            i   = t_image_map(y, x, 3);
+            image_trans(t_y, t_x) = i;
+        end
+    end
+    figure, imshow(mat2gray(image_trans))
+end
+
 
 function visualization(image1_rgb, image2_rgb, f1, f2)
 figure, imshowpair(image1_rgb, image2_rgb, 'montage') % init figure
@@ -138,7 +180,6 @@ title('Matching features in both images')
 hold on
 
 % Draw lines between each pair of points
-
 for i = 1:50
     x = [f1(1, i) f2(1, i) + w];
     y = [f1(2, i) f2(2, i) ];
