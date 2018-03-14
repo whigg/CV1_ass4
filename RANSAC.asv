@@ -39,9 +39,7 @@ for n = 1:N
     % Pick P matches at random from the total set of matches T
     perm = randperm(size(T, 2)); % shuffle indices randomly
     sel = perm(1:P); % pick the first P indices
-    matches_im1 = T(1, sel); % take the corresponding pairs of T in image 1
-    matches_im2 = T(2, sel); % take the corresponding pairs of T in image 2
-    
+    matches = T(:, sel); % take the corresponding pairs of T
     % First row of matches: indices of interest points in image1
     % Second row of matches: indices of interest points in image2
 
@@ -49,12 +47,10 @@ for n = 1:N
     % Currently P is set to ONE, so now it is for one point.
     % TODO: fix for multiple points (including solving Ax=b).
     
-
-     x1 = f1(1, matches_im1);
-     y1 = f1(2, matches_im1);
-     x2 = f2(1, matches_im2);
-     y2 = f2(2, matches_im2);
-
+    x1 = f1(1, matches)
+    y1 = f1(2, matches(1))
+    x2 = f2(1, matches(2))
+    y2 = f2(2, matches(2))
     
     % Construct a matrix A and vector b using the P pairs of points
     % and find transformation parameters (m1, m2, m3, m4, t1, t2) 
