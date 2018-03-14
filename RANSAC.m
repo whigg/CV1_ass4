@@ -11,8 +11,8 @@ close ALL % close all figures
 
 % set default parameters
 if nargin == 0
-    image1 = imread('boat1.pgm');
-    image2 = imread('boat2.pgm');
+    image1 = imread('nils1.jpeg');
+    image2 = imread('nils2.jpeg');
 end
 if nargin < 3
     N = 10;
@@ -113,9 +113,9 @@ for n = 1:N
     end 
     
     % Show transformation
-    tform = affine2d([x(1) -x(2) 0; -x(3) x(4) 0; 0 0 1]);
-    result = imwarp(image1, tform);
-    figure, imshow(result)
+    %tform = affine2d([x(1) -x(2) 0; -x(3) x(4) 0; 0 0 1]);
+    %result = imwarp(image1, tform);
+    %figure, imshow(result)
     
     
 end
