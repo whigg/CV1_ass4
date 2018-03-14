@@ -9,8 +9,7 @@ function [ matches, f1, f2 ] = keypoint_matching(image1, image2, ...
 % DEPENDENCIES:
 %%% VLFeat (see http://www.vlfeat.org/install-matlab.html)
 %%% git clone git://github.com/vlfeat/vlfeat.git
-run('vlfeat-0.9.21-bin/vlfeat-0.9.21/toolbox/vl_setup')
-%%%run('/Users/Nils/vlfeat-0.9.21/toolbox/vl_setup')
+run('vlfeat-0.9.21/toolbox/vl_setup')
 
 close ALL % close all figures
 
