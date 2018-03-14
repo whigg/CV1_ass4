@@ -20,7 +20,7 @@ if nargin < 4
     [ T, f1, f2 ] = keypoint_matching(image1, image2);
 end
 if nargin < 5
-    P = 10; % For testing set to one
+    P = 50; % For testing set to one
 end
 
 % transform to grayscale if necessary
@@ -102,6 +102,12 @@ for n = 1:N
     
     visualization(image1, image2, f1, f2)
     
+    % Show transformation
+    tform = affine2d([x(1) -x(2) 0; -x(3) x(4) 0; 0 0 1]);
+    result = imwarp(image1, tform);
+    figure, imshow(result)
+    
+    
 end
 
 
@@ -120,12 +126,12 @@ title('Matching features in both images')
 hold on
 
 % Draw lines between each pair of points
-for i = 50:60
+for i = 40:60
     x = [f1(1, i) f2(1, i) + w];
     y = [f1(2, i) f2(2, i) ];
     line(x, y, 'Color', 'green', 'LineWidth', 1)
 end
-
+hold off
 
 end
 
