@@ -1,4 +1,4 @@
-function [ best_transformation ] = RANSAC(image1, image2, N, T, P, visualization)
+function [ best_transformation, inliers ] = RANSAC(image1, image2, N, T, P, visualization)
 %RANSAC Finds the best transformation between two images.
 % Input parameters:
 %   image1, image2      Rgb or grayscale images.
@@ -103,6 +103,8 @@ for n = 1:N
     
     num_inliers = length(distance(distance < 10));
     
+    inliers = transformed_f1(distance < 10);
+    
     if num_inliers > largest_num_inliers
         largest_num_inliers = num_inliers;
         best_transformation = x;       
@@ -155,11 +157,15 @@ function transform(image, trans)
     for y_t = 1:t_h
         for x_t = 1:t_w
             
-            % Get the coordinates of image1 
+            % Get the coordinates of the original image that correspond
+            % with the transformed image
             im1_c = round(inv(M) * ([ y_t; x_t ] - translation + [ t_ymin; t_xmin ]));
             
+            % When inside the original image, get pixel intensity
             if im1_c(1) > 0 && im1_c(1) < h && im1_c(2) > 0 && im1_c(2) < w
                 t_image(y_t, x_t) = image(im1_c(1), im1_c(2));
+
+            % Black otherwise
             else
                 t_image(y_t, x_t) = 0;
             end
