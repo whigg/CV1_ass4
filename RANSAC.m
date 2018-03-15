@@ -1,10 +1,12 @@
-function [ best_transformation ] = RANSAC(image1, image2, N, T, P, visualization)
+function [ best_transformation ] = RANSAC(image1, image2, N, T, P, ...
+    transformation, visualization)
 %RANSAC Finds the best transformation between two images.
 % Input parameters:
 %   image1, image2      Rgb or grayscale images.
 %   N                   Amount of iterations (default: 1).
 %   T                   Total set of matches.
 %   P                   Amount of (random) samples from T.
+%   transformation      Method of transformation (default: 'nearest').
 %   visualization       Boolean for visualizing figures (default: true).
 
 close ALL % close all figures
@@ -23,7 +25,10 @@ end
 if nargin < 5
     P = 11;
 end
-if nargin < 6
+if nargin < 7
+    transformation = 'nearest';
+end
+if nargin < 7
     visualization = false;
 end
 
@@ -113,21 +118,27 @@ for n = 1:N
     %result = imwarp(image1, tform);
     %figure, imshow(result)    
 end
+ 
+% Transform the image using the best transformation matrix and method
+if strcmp(transformation, 'nearest') % nearest neighbour interpolation
+    result = transform(image1, best_transformation);
+elseif strcmp(transformation, 'affine2d') % affine2d with imwarp
+    tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
+    -best_transformation(3) best_transformation(4) 0; 0 0 1]);
+    result = imwarp(image1, tform);
+else % maketform with imtransform (not recommended)
+    tform = maketform('affine', [best_transformation(1) -best_transformation(2) 0; ...
+    -best_transformation(3) best_transformation(4) 0; 0 0 1]);
+    result = imtransform(image1 ,tform);      
+end
 
 % Show transformation
-%tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
-%    -best_transformation(3) best_transformation(4) 0; ...
-%    0 0 1]);
-%result = imwarp(image1, tform);
-%figure, imshow(result)
-    
-% Transform the image using the best transformation matrix
-transform(image1, best_transformation);
+figure, imshow(result), title(strcat('Rotation using', ': ', transformation));
 
 end
 
 
-function transform(image, trans)
+function [ t_image ] = transform(image, trans)
     % Transformation matrix
     M = [[trans(1) trans(2)]
          [trans(3) trans(4)]];
@@ -201,7 +212,9 @@ function transform(image, trans)
 %             image_trans(t_y, t_x) = i;
 %         end
 %     end
-    figure, imshow(mat2gray(t_image))
+    
+t_image = mat2gray(t_image);
+%figure, imshow(mat2gray(t_image))
 end
 
 
