@@ -1,7 +1,7 @@
 function t_image = transform(image, trans)
     % Transformation matrix
-    M = [[trans(1) trans(2)]
-         [trans(3) trans(4)]];
+    M = [[trans(1) -trans(2)]
+         [-trans(3) trans(4)]];
     % Translation matrix
     translation = [trans(5), trans(6)]';
 
@@ -72,5 +72,5 @@ function t_image = transform(image, trans)
 %             image_trans(t_y, t_x) = i;
 %         end
 %     end
-    figure, imshow(mat2gray(t_image))
+    %figure, imshow(mat2gray(t_image))
 end

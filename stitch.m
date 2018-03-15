@@ -15,21 +15,52 @@ end
 
 [ trans_matrix, inliers_im1, inliers_im2 ] = RANSAC(image1, image2);
 
-t_image = transform(image1, trans_matrix);
+t_image1 = transform(image1, trans_matrix);
 
-[ t_h, t_w, ~ ] = size(t_image);
+[ h1, w1, ~ ] = size(t_image1);
+[ h2, w2, ~ ] = size(image2);
 
-overlap_y = ceil(max(inliers_im1(1:2:end)) - min(inliers_im1(1:2:end)));
-overlap_x = ceil(max(inliers_im1(2:2:end)) - min(inliers_im1(2:2:end)));
+inliers_im1_y = inliers_im1(1:2:end);
+inliers_im1_x = inliers_im1(2:2:end);
+inliers_im2_y = inliers_im2(1:2:end);
+inliers_im2_x = inliers_im2(2:2:end);
 
-est_h = size(t_image, 1) + size(image2, 1) - overlap_y;
-est_w = size(t_image, 2) + size(image2, 2) - overlap_x;
+% ty2 = round(mean(inliers_im1_y - inliers_im2_y)); % Translation of image2 wrt image1
+% tx2 = round(mean(inliers_im1_x - inliers_im2_x)); % Translation of image2 wrt image1
 
-stitched = zeros(est_h, est_w);
-stitched(1:size(t_image, 1), 1:size(t_image, 2)) = t_image(:, :);
-close ALL
-imshow(mat2gray(stitched))
+ty2 = round(trans_matrix(6));
+tx2 = round(trans_matrix(5));
 
-E
+im1_upperleft  = [ 1 , 1  ];
+im1_upperright = [ 1 , w1 ];
+im1_lowerleft  = [ h1, 1  ];
+im1_lowerright = [ h1, w1 ];
 
+im2_upperleft  = [  1,  1 ] - [ ty2, tx2 ];
+im2_upperright = [  1, w1 ] - [ ty2, tx2 ];
+im2_lowerleft  = [ h1,  1 ] - [ ty2, tx2 ];
+im2_lowerright = [ h1, w1 ] - [ ty2, tx2 ];
+
+stitch_miny = min([ im1_upperleft(1), im1_upperright(1), im1_lowerleft(1), im1_lowerright(1), ...
+                    im2_upperleft(1), im2_upperright(1), im2_lowerleft(1), im2_lowerright(1) ]);
+stitch_minx = min([ im1_upperleft(2), im1_upperright(2), im1_lowerleft(2), im1_lowerright(2), ...
+                    im2_upperleft(2), im2_upperright(2), im2_lowerleft(2), im2_lowerright(2) ]);
+stitch_maxy = max([ im1_upperleft(1), im1_upperright(1), im1_lowerleft(1), im1_lowerright(1), ...
+                    im2_upperleft(1), im2_upperright(1), im2_lowerleft(1), im2_lowerright(1) ]);
+stitch_maxx = max([ im1_upperleft(2), im1_upperright(2), im1_lowerleft(2), im1_lowerright(2), ...
+                    im2_upperleft(2), im2_upperright(2), im2_lowerleft(2), im2_lowerright(2) ]);
+
+ty = stitch_miny-1;
+tx = stitch_minx-1;
+
+stitched = zeros( stitch_maxy-ty, stitch_maxx-tx );
+
+stitched(1:h1, 1:w1) = t_image1;
+stitched(1-ty-ty2:h2-ty-ty2, 1-tx-tx2:w2-tx-tx2) = image2;
+
+% close ALL
+figure, imshow(mat2gray(stitched))
+
+% figure, imshow(mat2gray(t_image1))
+% figure, imshow(image2)
 end

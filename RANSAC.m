@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 function [ best_transformation, inliers_im1, inliers_im2 ] = RANSAC(image1, image2, N, T, P, visualization)
-=======
-function [ best_transformation ] = RANSAC(image1, image2, N, T, P, ...
-    transformation, visualization)
->>>>>>> a2c1e15756a2a747c763d60ad0bd7382f71c93fe
+
 %RANSAC Finds the best transformation between two images.
 % Input parameters:
 %   image1, image2      Rgb or grayscale images.
@@ -21,13 +17,13 @@ if nargin == 0
     image2 = imread('boat2.pgm');
 end
 if nargin < 3
-    N = 10;
+    N = 50;
 end
 if nargin < 4
     [ T, f1, f2 ] = keypoint_matching(image1, image2);
 end
 if nargin < 5
-    P = 11;
+    P = 5;
 end
 if nargin < 7
     transformation = 'nearest';
@@ -98,9 +94,9 @@ for n = 1:N
     
     % For visualization, show the transformations from image1 to image2 
     % and from image2 to image1.
-    if visualization
-        visualization(image1, image2, f1, transformed_f1)
-    end
+%     if visualization
+%         visualization(image1, image2, f1, transformed_f1)
+%     end
     
     %im1_feat_points = [ x1 ; y1 ];
     trans_im1_feat_points = [ b(1:2:end), b(2:2:end) ]';
@@ -110,15 +106,14 @@ for n = 1:N
     (trans_im1_feat_points(1, :) - OG_im2_feat_points(1, :)).^2 + ...
     (trans_im1_feat_points(2, :) - OG_im2_feat_points(2, :)).^2);
 
-    inliers_im1 = trans_im1_feat_points(distance < 10);
-    inliers_im2 = OG_im2_feat_points(distance < 10);
-    
-    num_inliers = length(inliers_im1);
+    num_inliers = length(trans_im1_feat_points(:, distance < 10));
 
-    
     if num_inliers > largest_num_inliers
         largest_num_inliers = num_inliers;
-        best_transformation = x;       
+        best_transformation = x;
+
+        inliers_im1 = trans_im1_feat_points(:, distance < 10);
+        inliers_im2 = OG_im2_feat_points(:, distance < 10);
     end 
     
     % Show transformation
@@ -142,7 +137,7 @@ else % maketform with imtransform (not recommended)
 end
 
 % Show transformation
-<<<<<<< HEAD
+
 %tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
 %    -best_transformation(3) best_transformation(4) 0; ...
 %    0 0 1]);
@@ -151,15 +146,11 @@ end
     
 % Transform the image using the best transformation matrix
 %t_image = transform(image1, best_transformation);
-=======
-figure, imshow(result), title(strcat('Rotation using', ': ', transformation));
->>>>>>> a2c1e15756a2a747c763d60ad0bd7382f71c93fe
+%figure, imshow(result), title(strcat('Rotation using', ': ', transformation));
 
 end
 
 
-<<<<<<< HEAD
-=======
 function [ t_image ] = transform(image, trans)
     % Transformation matrix
     M = [[trans(1) trans(2)]
@@ -235,11 +226,9 @@ function [ t_image ] = transform(image, trans)
 %         end
 %     end
     
-t_image = mat2gray(t_image);
+%t_image = mat2gray(t_image);
 %figure, imshow(mat2gray(t_image))
 end
->>>>>>> a2c1e15756a2a747c763d60ad0bd7382f71c93fe
-
 
 function visualization(image1_rgb, image2_rgb, f1, f2)
 figure, imshowpair(image1_rgb, image2_rgb, 'montage') % init figure
