@@ -155,15 +155,11 @@ function transform(image, trans)
     for y_t = 1:t_h
         for x_t = 1:t_w
             
-            % Get the coordinates of the original image that correspond
-            % with the transformed image
+            % Get the coordinates of image1 
             im1_c = round(inv(M) * ([ y_t; x_t ] - translation + [ t_ymin; t_xmin ]));
             
-            % When inside the original image, get pixel intensity
             if im1_c(1) > 0 && im1_c(1) < h && im1_c(2) > 0 && im1_c(2) < w
                 t_image(y_t, x_t) = image(im1_c(1), im1_c(2));
-
-            % Black otherwise
             else
                 t_image(y_t, x_t) = 0;
             end
