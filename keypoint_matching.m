@@ -52,7 +52,6 @@ s_image2 = single(image2);
 % and plot on the image. Connect matching pairs with lines.
 
 if visualization
-
     figure, imshowpair(image1_rgb, image2_rgb, 'montage') % init figure
     title('Matching features in both images')
 
@@ -77,7 +76,7 @@ if visualization
     hold on
 
     % Draw lines between each pair of points
-    for i = 1:50 
+    for i = 1:visualizePoints 
         x = [f1(1, sel1(i)) f2(1, sel2(i))];
         y = [f1(2, sel1(i)) f2(2, sel2(i))];
         line(x, y, 'Color', 'cyan', 'LineWidth', 1)
