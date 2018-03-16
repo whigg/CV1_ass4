@@ -22,7 +22,7 @@ if nargin < 3
     visualizePoints = 50;
 end
 if nargin < 4
-    visualization = false;
+    visualization = true;
 end
 
 % transform to grayscale if necessary

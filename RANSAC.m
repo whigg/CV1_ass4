@@ -22,10 +22,10 @@ if nargin < 3
     N = 10;
 end
 if nargin < 4
-    [ T, f1, f2 ] = keypoint_matching(image1, image2);
+    [ T, f1, f2 ] = keypoint_matching(image1, image2, 50, false);
 end
 if nargin < 5
-    P = 2;
+    P = 10;
 end
 if nargin < 6
     transformation = 'nearest';
@@ -37,7 +37,7 @@ if nargin < 8
     visualizeFinal = true;
 end
 if nargin < 9
-    saveResults = true;
+    saveResults = false;
 end
 
 matches_im1 = T(1, :);
@@ -134,6 +134,7 @@ elseif strcmp(transformation, 'affine2d') % affine2d with imwarp
     -best_transformation(3) best_transformation(4) 0; 0 0 1]);
     result = imwarp(image1, tform);
 else % maketform with imtransform (not recommended)
+    transformation = 'maketform';
     tform = maketform('affine', [best_transformation(1) -best_transformation(2) 0; ...
     -best_transformation(3) best_transformation(4) 0; 0 0 1]);
     result = imtransform(image1 ,tform);      
@@ -148,7 +149,7 @@ end
 
 % Save results
 if saveResults == true
-    fileName = strcat('results/im2_1_trans_', transformation, ...
+    fileName = strcat('results/im1_2_trans_', transformation, ...
         '_N_', int2str(N), '_P_', int2str(P), '.png');
     imwrite(result, fileName)
 end
