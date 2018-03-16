@@ -1,4 +1,5 @@
-function [ best_transformation, inliers_im1, inliers_im2 ] = RANSAC(image1, image2, N, T, P, visualize)
+function [ best_transformation, inliers_im1, inliers_im2 ] = RANSAC(...
+    image1, image2, N, T, P, visualizeTemp, visualizeFinal, saveResults)
 
 %RANSAC Finds the best transformation between two images.
 % Input parameters:
@@ -7,8 +8,9 @@ function [ best_transformation, inliers_im1, inliers_im2 ] = RANSAC(image1, imag
 %   T                   Total set of matches.
 %   P                   Amount of (random) samples from T.
 %   transformation      Method of transformation (default: 'nearest').
-%   visualization       Boolean for visualizing figures (default: true).
-
+%   visualizeTemp       Boolean for visualizing results in every iteration (default: false).
+%   visualizeFinal      Boolean for visualizing final results (default: true).
+%   saveResults         Boolean for saving results (default: false).
 close ALL % close all figures
 
 % set default parameters
@@ -17,19 +19,25 @@ if nargin == 0
     image2 = imread('boat2.pgm');
 end
 if nargin < 3
-    N = 50;
+    N = 10;
 end
 if nargin < 4
     [ T, f1, f2 ] = keypoint_matching(image1, image2);
 end
 if nargin < 5
-    P = 5;
+    P = 2;
 end
-if nargin < 7
+if nargin < 6
     transformation = 'nearest';
 end
 if nargin < 7
-    visualize = false;
+    visualizeTemp = false;
+end
+if nargin < 8
+    visualizeFinal = true;
+end
+if nargin < 9
+    saveResults = true;
 end
 
 matches_im1 = T(1, :);
@@ -72,7 +80,7 @@ for n = 1:N
     b(1:2:end) = x2;
     b(2:2:end) = y2;    
 
-    x =  pinv(A) * b; % Solve Ax = b     x = [ m1, m2, m3, m4, t1, t2 ]'
+    x =  pinv(A) * b; % Solve Ax = b  with  x = [ m1, m2, m3, m4, t1, t2 ]'
     
     % Using the transformation parameters, transform the locations of all T points in image1.
     % If the transformation is correct, they should lie close to their counterparts in image2. 
@@ -93,13 +101,12 @@ for n = 1:N
     
     b = A*x;
 
-    %im1_feat_points = [ x1 ; y1 ];
     trans_im1_feat_points = [ b(1:2:end), b(2:2:end) ]';
     OG_im2_feat_points = f2(1:2, matches_im2);
     
     % For visualization, show the transformations from image1 to image2 
     % and from image2 to image1.
-     if visualize
+     if visualizeTemp
          visualization(image1, image2, f1, trans_im1_feat_points)
      end
     
@@ -116,17 +123,12 @@ for n = 1:N
         inliers_im1 = trans_im1_feat_points(:, distance < 10);
         inliers_im2 = OG_im2_feat_points(:, distance < 10);
     end 
-    
-    % Show transformation
-    %tform = affine2d([x(1) -x(2) 0; -x(3) x(4) 0; 0 0 1]);
-    %result = imwarp(image1, tform);
-    %figure, imshow(result)    
-    
+
 end
  
 % Transform the image using the best transformation matrix and method
 if strcmp(transformation, 'nearest') % nearest neighbour interpolation
-    result = transform(image1, best_transformation);
+    result = mat2gray(transform(image1, best_transformation));
 elseif strcmp(transformation, 'affine2d') % affine2d with imwarp
     tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
     -best_transformation(3) best_transformation(4) 0; 0 0 1]);
@@ -138,17 +140,17 @@ else % maketform with imtransform (not recommended)
 end
 
 % Show transformation
+if visualizeFinal
+    titleDescription = strcat('Rotation using', {' '}, 'N=', int2str(N), ...
+        ',', {' '}, 'P=', int2str(P), ',', {' '}, 'transformation=', transformation);
+    figure, imshow(result), title(titleDescription);
+end
 
-%tform = affine2d([best_transformation(1) -best_transformation(2) 0; ...
-%    -best_transformation(3) best_transformation(4) 0; ...
-%    0 0 1]);
-%result = imwarp(image1, tform);
-%figure, imshow(result)
-    
-% Transform the image using the best transformation matrix
-if visualize
-    t_image = mat2gray(transform(image1, best_transformation));
-    figure, imshow(t_image), title(strcat('Rotation using', ': ', transformation));
+% Save results
+if saveResults == true
+    fileName = strcat('results/im2_1_trans_', transformation, ...
+        '_N_', int2str(N), '_P_', int2str(P), '.png');
+    imwrite(result, fileName)
 end
 
 end
